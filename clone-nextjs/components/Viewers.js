@@ -2,6 +2,17 @@ import React from 'react';
 import styled from 'styled-components';
 
 function Viewers() {
+  
+
+  const pauseMovie = (e) => {
+    e.target.pause();
+    console.log('off');
+  };
+
+  const startMovie = (e) => {
+    e.target.play();
+    console.log('on');
+  };
   return (
     <VideoCardContainer>
       <VideoCard>
@@ -10,7 +21,14 @@ function Viewers() {
           className='videoCard-image'
           alt='viewers images'
         />
-        <video src='videos/disney.mp4' mute loop className='card-video'></video>
+        <video
+          src='videos/disney.mp4'
+          onMouseEnter={startMovie}
+          onMouseLeave={pauseMovie}
+          mute="true"
+          loop
+          className='card-video'
+        ></video>
       </VideoCard>
       <VideoCard>
         <img
@@ -18,7 +36,14 @@ function Viewers() {
           className='videoCard-image'
           alt='viewers images'
         />
-        <video src='videos/pixar.mp4' mute loop className='card-video'></video>
+        <video
+          src='videos/pixar.mp4'
+          onMouseEnter={startMovie}
+          onMouseLeave={pauseMovie}
+          mute="true"
+          loop
+          className='card-video'
+        ></video>
       </VideoCard>
       <VideoCard>
         <img
@@ -26,7 +51,14 @@ function Viewers() {
           className='videoCard-image'
           alt='viewers images'
         />
-        <video src='videos/marvel.mp4' mute loop className='card-video'></video>
+        <video
+          src='videos/marvel.mp4'
+          mute="true"
+          onMouseEnter={startMovie}
+          onMouseLeave={pauseMovie}
+          className='card-video'
+          loop
+        ></video>
       </VideoCard>
       <VideoCard>
         <img
@@ -36,7 +68,9 @@ function Viewers() {
         />
         <video
           src='videos/star-wars.mp4'
-          mute
+          onMouseEnter={startMovie}
+          onMouseLeave={pauseMovie}
+          mute="true"
           loop
           className='card-video'
         ></video>
@@ -49,7 +83,9 @@ function Viewers() {
         />
         <video
           src='videos/national-geographic.mp4'
-          mute
+          onMouseEnter={startMovie}
+          onMouseLeave={pauseMovie}
+          mute="true"
           loop
           className='card-video'
         ></video>
@@ -76,6 +112,7 @@ const VideoCard = styled.div`
   min-width: calc(100% / 5 - 10px);
   width: calc(100% / 5 - 10px);
   height: 100%;
+  margin-top: 30px;
   border-radius: 10px;
   border: 3px solid rgba(249, 249, 249, 0.1);
   cursor: pointer;
@@ -90,12 +127,12 @@ const VideoCard = styled.div`
     height: 100%;
     object-fit: cover;
   }
-
   .card-video {
     position: absolute;
+    z-index: 10;
+    
   }
-
-  &:hover .videoCard-image {
+  &:hover .videoCard-image{
     box-shadow: rgb(0 0 / 80%) 0 40px 58px -16px,
       rgb(0 0 0 / 72%) 0 30px 22px -10px;
     transform: scale(1.05);
