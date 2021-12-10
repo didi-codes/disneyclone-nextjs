@@ -7,6 +7,8 @@ import Section from '../components/Section';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
+import Slider from 'react-slick';
+
 export const getStaticProps = async () => {
   const url = process.env.ENDPOINT;
 
@@ -76,18 +78,37 @@ const Home = ({ videos, account }) => {
     return videos.filter((video) => video.seen == false || video.seen == null);
   };
 
+  const settings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    rows: 20,
+    sildesPerRow: 1
+  };
+
   return (
     <>
       <Navbar account={account} />
       <Container>
         <ImgSlider videos={videos} />
         <Viewers />
-        <Videofeed>
-          <a href="disney"><div className="franchise" id="disney"></div></a>
-          <a href="#marvel"><div className="franchise" id="marvel"></div></a>
-          <a href="pixar"><div className="franchise" id="pixar"></div></a>
-          <a href="star-wars"><div className="franchise" id="star-wars"></div></a>
-          <a href="nat-geo"><div className="franchise" id="nat-geo"></div></a>
+        <Videofeed {...settings}>
+          <a href='disney'>
+            <div className='franchise' id='disney'></div>
+          </a>
+          <a href='#marvel'>
+            <div className='franchise' id='marvel'></div>
+          </a>
+          <a href='pixar'>
+            <div className='franchise' id='pixar'></div>
+          </a>
+          <a href='star-wars'>
+            <div className='franchise' id='star-wars'></div>
+          </a>
+          <a href='nat-geo'>
+            <div className='franchise' id='nat-geo'></div>
+          </a>
           <Section
             genre={'Recommended for you'}
             videos={unSeenVideos(videos)}
@@ -116,11 +137,31 @@ const Home = ({ videos, account }) => {
           />
           <Section genre={'Fantasy'} videos={filterVideos(videos, 'Fantasy')} />
           <Section genre={'Action'} videos={filterVideos(videos, 'Action')} />
-          <Section id="disney" genre={'Disney'} videos={filterVideos(videos, 'Disney')} />
-          <Section id="pixar" genre={'Pixar'} videos={filterVideos(videos, 'Pixar')} />
-          <Section id="marvel" genre={'Marvel'} videos={filterVideos(videos, 'Marvel')} />
-          <Section id="star-wars" genre={'Star Wars'} videos={filterVideos(videos, 'Star Wars')} />
-          <Section id="nat-geo" genre={'National Geographic'} videos={filterVideos(videos, 'National Geographic')} />
+          <Section
+            id='disney'
+            genre={'Disney'}
+            videos={filterVideos(videos, 'Disney')}
+          />
+          <Section
+            id='pixar'
+            genre={'Pixar'}
+            videos={filterVideos(videos, 'Pixar')}
+          />
+          <Section
+            id='marvel'
+            genre={'Marvel'}
+            videos={filterVideos(videos, 'Marvel')}
+          />
+          <Section
+            id='star-wars'
+            genre={'Star Wars'}
+            videos={filterVideos(videos, 'Star Wars')}
+          />
+          <Section
+            id='nat-geo'
+            genre={'National Geographic'}
+            videos={filterVideos(videos, 'National Geographic')}
+          />
         </Videofeed>
         <Footer />
       </Container>
@@ -147,6 +188,6 @@ top: 0;
  z-index: -10;
 `;
 
-const Videofeed = styled.div`
-  
+const Videofeed = styled(Slider)`
+  di
 `;
