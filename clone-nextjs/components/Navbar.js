@@ -1,15 +1,32 @@
-import Link from 'next/Link'
+import React, { useState, useEffect } from 'react';
+import Link from 'next/Link';
 import styled from 'styled-components';
 
+const Navbar = ({ account }) => {
+  const [colorChange, setColorChange] = useState('top');
 
-const Navbar = () => {
+  useEffect(() => {
+    document.addEventListener('scroll', (e) => {
+      let scrolled = document.scrollingElement.scrollTop;
+      if (scrolled >= 5) {
+        setColorChange('moved');
+      } else {
+        setColorChange('top');
+      }
+    });
+  }, []);
   return (
-    <Nav>
-    <Link href="/">
-    <Logo src='/images/logo.svg' alt="logo"/>
-    </Link>
+    <Nav
+      style={{
+        backgroundColor:
+          colorChange === 'top' ? 'rgba(0, 0, 0, 0)' : 'rgb(9, 11, 19)'
+      }}
+    >
+      <Link href='/'>
+        <Logo src='/images/logo.svg' alt='logo' />
+      </Link>
       <NavMenu>
-        <a href="/">
+        <a href='/'>
           <img src='/images/home-icon.svg' alt='home icon' />
           <span>HOME</span>
         </a>
@@ -34,7 +51,12 @@ const Navbar = () => {
           <span>SERIES</span>
         </a>
       </NavMenu>
-      <UserImg src='/images/didi.jpg'></UserImg>
+      <User>
+        <p>
+          Welcome <span>{account.username}</span>
+        </p>
+        <UserImg src={account.avatar.url} alt={account.username}></UserImg>
+      </User>
     </Nav>
   );
 };
@@ -44,18 +66,17 @@ export default Navbar;
 const Nav = styled.div`
   width: 100%;
   height: 70px;
-  background: #090b13;
+  color: #fff;
   display: flex;
   align-items: center;
-  padding: 0 36px;
-  overflow-x: hidden;
+  padding: 0px 36px;
+ 
 `;
 const Logo = styled.img`
   cursor: pointer;
   width: 80px;
 `;
 const NavMenu = styled.div`
-    color: #fff;
     display:flex;
     flex: 1;
     margin-left: 25px;
@@ -99,6 +120,16 @@ const NavMenu = styled.div`
         }
     }
     `;
+const User = styled.div`
+  font-size: 13px;
+  letter-spacing: 1.42px;
+  display: flex;
+  align-items: center;
+
+  p {
+    margin-right: 10px;
+  }
+`;
 const UserImg = styled.img`
   object-fit: cover;
   width: 48px;

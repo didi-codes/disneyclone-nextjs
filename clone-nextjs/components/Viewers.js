@@ -97,7 +97,6 @@ function Viewers() {
 export default Viewers;
 
 const VideoCardContainer = styled.div`
-position: relative;
 width: 92%;
 margin: auto;
 height: 10vw;
@@ -114,13 +113,19 @@ const VideoCard = styled.div`
   height: 100%;
   margin-top: 30px;
   border-radius: 10px;
-  border: 3px solid rgba(249, 249, 249, 0.1);
+  border: 1px solid rgba(249, 249, 249, 0.1);
   cursor: pointer;
   box-shadow: rgb(0 0 0 / 69%) 0 26px 30px -10px,
     rgb(0 0 0 / 73%) 0 16px 10px -10px;
-
   transition: all 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s;
+  background: linear-gradient(rgb(48, 50, 62), rgb(30, 31, 42))
 
+  .videoCard-image {
+    transition: opacity 500ms ease-in-out 0s;
+    opacity: 1;
+    inset: 0px;
+    cursor: pointer;
+  }
   .videoCard-image,
   .card-video {
     width: 100%;
@@ -129,9 +134,10 @@ const VideoCard = styled.div`
   }
   .card-video {
     position: absolute;
-    z-index: 10;
+    z-index: 0;
     
   }
+  
   &:hover .videoCard-image{
     box-shadow: rgb(0 0 / 80%) 0 40px 58px -16px,
       rgb(0 0 0 / 72%) 0 30px 22px -10px;

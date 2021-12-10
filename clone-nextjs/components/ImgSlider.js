@@ -36,9 +36,14 @@ export default ImgSlider;
 const Carousel = styled(Slider)`
     margin-top: 20px;
     margin-bottom: 20px;
+     .slick-dots {
+      left: 40%;
+      top: 90%;
+
+    }
     ul li button {
         &:before {
-            font-size: 10px;
+            font-size: 20px;
             color: rgb(150, 158, 171);
         }
     }
@@ -47,8 +52,24 @@ const Carousel = styled(Slider)`
         color: #fff;
     }
 
+    .slick-slide {
+      padding: 5px;
+    }
+
     .slick-list {
         overflow: visible;
+    }
+
+    .slick-prev:before {
+      margin-right: -150px;
+      font-size: 80px;
+      opacity: 20%;
+    }
+
+    .slick-next:before {
+      margin-left: -150px;
+      font-size: 80px;
+      opacity: 20%;
     }
 
     button {
@@ -63,10 +84,11 @@ const Wrap = styled(Slider)`
   flex-direction: row;
   img {
     width: 100%;
-    height: 300px;
+    
+    height: 475px;
     object-fit: cover;
     object-position: 50% 5%;
-    border-radius: 4px;
+    border-radius: 10px;
     border: 4px solid transparent;
     box-shadow: rgb(0 0 0 / 69%) 0px 26px 30px -10px,
       rgb(0 0 0 / 73%) 0px 16px 10px -10px;

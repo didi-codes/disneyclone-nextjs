@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { gql, GraphQLClient } from 'graphql-request';
 import styled from 'styled-components';
 import Navbar from '../../components/Navbar';
@@ -40,6 +41,17 @@ export const getServerSideProps = async (pageContext) => {
       }
     }
   `;
+
+  const accountQuery = gql`
+    query {
+      account(where: { id: "ckvmbvyh4cudt0a30t41133pd" }) {
+        username
+        avatar {
+          url
+        }
+      }
+    }
+  `;
   const variables = {
     pageSlug,
   };
@@ -47,14 +59,24 @@ export const getServerSideProps = async (pageContext) => {
   const data = await graphQLClient.request(videoQuery, variables);
   const video = data.video;
 
+  const accountData = await graphQLClient.request(accountQuery);
+  const account = accountData.account;
+
   return {
     props: {
       video,
+      account
     },
   };
 };
 
-const Video = ({ video }) => {
+const changeToSeen = async(slug) => {
+    await fetch('/api/changeToSeen')
+}
+
+const Video = ({ video, account }) => {
+    console.log(account);
+    const [watch, setWatch] = useState(false);
     let settings = {
         dots: false,
         infinte: false,
@@ -64,16 +86,19 @@ const Video = ({ video }) => {
     }
   return (
     <div>
-      <Navbar />
+      <Navbar account={account} />
       <Container>
-        <Background>
+        {!watch && <Background>
           <img src={video.backgroundImg.url} alt={video.title} />
-        </Background>
-        <ImageTitle>
-          <img src={video.titleImg.url} alt='' />
-        </ImageTitle>
-        <Control>
-          <PlayButton>
+          <div className="overlay"></div>
+        </Background>}
+        {!watch && <ImageTitle>
+         <img src={video.titleImg.url} alt='' />
+        </ImageTitle>}
+        {!watch && <Control>
+          <PlayButton onClick={() => {
+              watch ? setWatch(false): setWatch(true)
+          }}>
             <img src='/images/play-icon-black.png' alt='play' />
             <span>PLAY</span>
           </PlayButton>
@@ -87,9 +112,21 @@ const Video = ({ video }) => {
           <GroupWatchButton>
             <img src='/images/group-icon.png' alt='group watch' />
           </GroupWatchButton>
-        </Control>
-        <Subtitle>{video.subtitle}</Subtitle>
-        <Description>{video.description}</Description>
+        </Control>}
+        {!watch && <Subtitle>
+           <p> {video.tags.join(' -  ')} <span>{video.subtitle}</span></p> 
+        </Subtitle>}
+       {!watch && <Description>{video.description}</Description>}
+        <Watching> 
+        {watch && (
+              <video width="100%" controls>
+                  <source src={video.mp4.url} type="video.mp4"/>
+              </video>
+          )}
+        </Watching>
+        <Suggested onClick ={() => watch ? setWatch(false): null}>
+            <p>Suggested</p>
+        </Suggested>
       </Container>
       <Footer />
     </div>
@@ -103,39 +140,43 @@ const Container = styled.div`
     min-height: calc(100vh - 70px);
     padding: 0 calc(3.5vw + 5px);
     position: relative;
+    color: #fff;
 
     &:before {
         background: url("/images/home-background.png") center center / cover no-repeat fixed;
         content: "";
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
         right 0;
         bottom: 0;
-        z-index: -1;
+        transition: opacity 200ms ease 0s;
+        z-index: -3;
     }
 `;
 
 const Background = styled.div`
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
-  bottom: 0;
   right: 0;
   z-index: -1;
-  opacity: 0.8;
+  opacity: 1;
+  transition: opacity 200ms ease 0;
 
   img {
-    width: 100%;
-    height: 400px;
-    object-fit: cover;
-    object-position: 60% 0;
+   width: 100vw;
+  }
+  .overlay {
+      background-image: radial-gradient(farthest-side at 73% 21%, transparent, rgb(26, 29, 41));
+      position: absolute;
+      inset: 0px;
   }
 `;
 const ImageTitle = styled.div`
   margin-top: 60px;
   height: 30vh;
-  width: 40vw;
+  width: 20vw;
   min-height: 170px;
   min-width: 200px;
 
@@ -148,7 +189,7 @@ const ImageTitle = styled.div`
 const Control = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 150px;
+  
 `;
 const PlayButton = styled.div`
   border-radius: 4px;
@@ -199,12 +240,24 @@ const Subtitle = styled.div`
     font-size 15px;
     min-height: 20px;
     margin-top: 26px;
+    
+    p {
+        margin-right: 5px;
+    }
+    span {
+        margin-left: 8px;
+    }
 `;
 const Description = styled.div`
-  max-width: 760px;
+  max-width: 695px;
   line-height: 1.4;
   font-size: 20px;
   margin-top: 16px;
   color: rgb(249, 249, 249);
 `;
-const Suggested = styled.div``;
+
+const Watching = styled.div`
+`
+const Suggested = styled.div`
+margin-top: 30px;
+`;
