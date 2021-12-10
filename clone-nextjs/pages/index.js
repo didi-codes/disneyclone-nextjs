@@ -83,6 +83,11 @@ const Home = ({ videos, account }) => {
         <ImgSlider videos={videos} />
         <Viewers />
         <Videofeed>
+          <a href="disney"><div className="franchise" id="disney"></div></a>
+          <a href="#marvel"><div className="franchise" id="marvel"></div></a>
+          <a href="pixar"><div className="franchise" id="pixar"></div></a>
+          <a href="star-wars"><div className="franchise" id="star-wars"></div></a>
+          <a href="nat-geo"><div className="franchise" id="nat-geo"></div></a>
           <Section
             genre={'Recommended for you'}
             videos={unSeenVideos(videos)}
@@ -111,7 +116,11 @@ const Home = ({ videos, account }) => {
           />
           <Section genre={'Fantasy'} videos={filterVideos(videos, 'Fantasy')} />
           <Section genre={'Action'} videos={filterVideos(videos, 'Action')} />
-          <Section genre={'Musical'} videos={filterVideos(videos, 'Musical')} />
+          <Section id="disney" genre={'Disney'} videos={filterVideos(videos, 'Disney')} />
+          <Section id="pixar" genre={'Pixar'} videos={filterVideos(videos, 'Pixar')} />
+          <Section id="marvel" genre={'Marvel'} videos={filterVideos(videos, 'Marvel')} />
+          <Section id="star-wars" genre={'Star Wars'} videos={filterVideos(videos, 'Star Wars')} />
+          <Section id="nat-geo" genre={'National Geographic'} videos={filterVideos(videos, 'National Geographic')} />
         </Videofeed>
         <Footer />
       </Container>
@@ -135,10 +144,9 @@ top: 0;
  inset: 0px;
  opacity: 1;
  transition: opacity 500ms ease 0s;
- z-index: -1;
+ z-index: -10;
 `;
 
 const Videofeed = styled.div`
-  display: flex;
-  flex-direction: column;
+  
 `;

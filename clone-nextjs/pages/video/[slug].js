@@ -71,7 +71,13 @@ export const getServerSideProps = async (pageContext) => {
 };
 
 const changeToSeen = async(slug) => {
-    await fetch('/api/changeToSeen')
+    await fetch('/api/changeToSeen', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({slug})
+    })
 }
 
 const Video = ({ video, account }) => {
@@ -97,6 +103,7 @@ const Video = ({ video, account }) => {
         </ImageTitle>}
         {!watch && <Control>
           <PlayButton onClick={() => {
+              changeToSeen(video.slug)
               watch ? setWatch(false): setWatch(true)
           }}>
             <img src='/images/play-icon-black.png' alt='play' />
