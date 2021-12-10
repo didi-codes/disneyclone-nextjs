@@ -3,6 +3,8 @@ import { gql, GraphQLClient } from 'graphql-request';
 import styled from 'styled-components';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import Slider from 'react-slick';
+// import Card from '../../components/Card'
 
 export const getServerSideProps = async (pageContext) => {
   const url = process.env.ENDPOINT;
@@ -42,6 +44,33 @@ export const getServerSideProps = async (pageContext) => {
     }
   `;
 
+  const videosQuery = gql`
+    query {
+      videos {
+        createdAt
+        id
+        description
+        title
+        subtitle
+        seen
+        slug
+        tags
+        titleImg {
+          url
+        }
+        backgroundImg {
+          url
+        }
+        thumbnail {
+          url
+        }
+        mp4 {
+          url
+        }
+      }
+    }
+  `;
+
   const accountQuery = gql`
     query {
       account(where: { id: "ckvmbvyh4cudt0a30t41133pd" }) {
@@ -59,80 +88,103 @@ export const getServerSideProps = async (pageContext) => {
   const data = await graphQLClient.request(videoQuery, variables);
   const video = data.video;
 
+  const videoData = await graphQLClient.request(videosQuery);
+  const videos = videoData.videos;
+
   const accountData = await graphQLClient.request(accountQuery);
   const account = accountData.account;
 
   return {
     props: {
       video,
-      account
+      videos,
+      account,
     },
   };
 };
 
-const changeToSeen = async(slug) => {
-    await fetch('/api/changeToSeen', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({slug})
-    })
-}
+const changeToSeen = async (slug) => {
+  await fetch('/api/changeToSeen', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ slug }),
+  });
+};
 
-const Video = ({ video, account }) => {
-    console.log(account);
-    const [watch, setWatch] = useState(false);
-    let settings = {
-        dots: false,
-        infinte: false,
-        speed: 300,
-        slidesToShow: 1,
-        slidesToScroll: 1
-    }
+const Video = ({ video, account, videos }) => {
+  let settings = {
+    dots: false,
+    infinte: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1
+}
+  const [watch, setWatch] = useState(false);
   return (
     <div>
       <Navbar account={account} />
       <Container>
-        {!watch && <Background>
-          <img src={video.backgroundImg.url} alt={video.title} />
-          <div className="overlay"></div>
-        </Background>}
-        {!watch && <ImageTitle>
-         <img src={video.titleImg.url} alt='' />
-        </ImageTitle>}
-        {!watch && <Control>
-          <PlayButton onClick={() => {
-              changeToSeen(video.slug)
-              watch ? setWatch(false): setWatch(true)
-          }}>
-            <img src='/images/play-icon-black.png' alt='play' />
-            <span>PLAY</span>
-          </PlayButton>
-          <TrailerButton>
-            <img src='/images/play-icon-white.png' alt='trailer' />
-            <span>Trailer</span>
-          </TrailerButton>
-          <AddButton>
-            <span>+</span>
-          </AddButton>
-          <GroupWatchButton>
-            <img src='/images/group-icon.png' alt='group watch' />
-          </GroupWatchButton>
-        </Control>}
-        {!watch && <Subtitle>
-           <p> {video.tags.join(' -  ')} <span>{video.subtitle}</span></p> 
-        </Subtitle>}
-       {!watch && <Description>{video.description}</Description>}
-        <Watching> 
-        {watch && (
-              <video width="100%" controls>
-                  <source src={video.mp4.url} type="video.mp4"/>
-              </video>
+        {!watch && (
+          <Background>
+            <img src={video.backgroundImg.url} alt={video.title} />
+            <div className='overlay'></div>
+          </Background>
+        )}
+        {!watch && (
+          <ImageTitle>
+            <img src={video.titleImg.url} alt='' />
+          </ImageTitle>
+        )}
+        {!watch && (
+          <Control>
+            <PlayButton
+              onClick={() => {
+                changeToSeen(video.slug);
+                watch ? setWatch(false) : setWatch(true);
+              }}
+            >
+              <img src='/images/play-icon-black.png' alt='play' />
+              <span>PLAY</span>
+            </PlayButton>
+            <TrailerButton>
+              <img src='/images/play-icon-white.png' alt='trailer' />
+              <span>Trailer</span>
+            </TrailerButton>
+            <AddButton>
+              <span>+</span>
+            </AddButton>
+            <GroupWatchButton>
+              <img src='/images/group-icon.png' alt='group watch' />
+            </GroupWatchButton>
+          </Control>
+        )}
+        {!watch && (
+          <Subtitle>
+            <p>
+              {' '}
+              {video.tags.join(' -  ')} <span>{video.subtitle}</span>
+            </p>
+          </Subtitle>
+        )}
+        {!watch && <Description>{video.description}</Description>}
+        <Watching>
+          {watch && (
+            <video width='100%' controls>
+              <source src={video.mp4.url} type='video.mp4' />
+            </video>
           )}
         </Watching>
-        <Suggested onClick ={() => watch ? setWatch(false): null}>
-            <p>Suggested</p>
+        <Suggested onClick={() => (watch ? setWatch(false) : null)}>
+          <p>Suggested</p>
+          {/* <Wrap {...settings}>
+            {videos.map((suggested) => (
+              <a key={suggested.id} href={`/suggested/${suggested.slug}`}>
+                 <Card thumbnail={suggested.thumbnail} />
+              </a>
+            ))}
+          </Wrap> */}
         </Suggested>
       </Container>
       <Footer />
@@ -172,12 +224,16 @@ const Background = styled.div`
   transition: opacity 200ms ease 0;
 
   img {
-   width: 100vw;
+    width: 100vw;
   }
   .overlay {
-      background-image: radial-gradient(farthest-side at 73% 21%, transparent, rgb(26, 29, 41));
-      position: absolute;
-      inset: 0px;
+    background-image: radial-gradient(
+      farthest-side at 73% 21%,
+      transparent,
+      rgb(26, 29, 41)
+    );
+    position: absolute;
+    inset: 0px;
   }
 `;
 const ImageTitle = styled.div`
@@ -196,7 +252,6 @@ const ImageTitle = styled.div`
 const Control = styled.div`
   display: flex;
   align-items: center;
-  
 `;
 const PlayButton = styled.div`
   border-radius: 4px;
@@ -263,8 +318,11 @@ const Description = styled.div`
   color: rgb(249, 249, 249);
 `;
 
-const Watching = styled.div`
-`
-const Suggested = styled.div`
-margin-top: 30px;
+const Watching = styled.div``;
+const Suggested = styled(Slider)`
+  
+`;
+
+const Wrap = styled(Slider)`
+ 
 `;

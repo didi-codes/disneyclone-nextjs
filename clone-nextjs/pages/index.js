@@ -55,8 +55,8 @@ export const getStaticProps = async () => {
       }
     }
   `;
-  const data = await graphQLClient.request(videosQuery);
-  const videos = data.videos;
+  const videoData = await graphQLClient.request(videosQuery);
+  const videos = videoData.videos;
 
   const accountData = await graphQLClient.request(accountQuery);
   const account = accountData.account;
